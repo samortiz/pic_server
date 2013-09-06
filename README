@@ -1,0 +1,22 @@
+pic_server
+==========
+
+Web site that stores and organizes pictures.
+
+This will import pictures from a directory and 
+slurp them into a file system and use a database
+to keep track of them.  
+
+Features : 
+ - rotate pictures
+ - tag pictures 
+ - add comments to pictures
+ - automatically generates thumbnails
+ - group pictures by event
+ - gets EXIF data 
+
+Installation : 
+ - Requires Java / JSP and imagemagic to be installed
+ - to create the database tables run web/scripts/create_tables.txt
+
+

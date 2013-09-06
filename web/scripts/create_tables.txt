@@ -1,0 +1,130 @@
+-- Remove Schema
+ drop sequence pic_lookup_seq;
+ drop table pic_lookup;
+ drop sequence pic_seq;
+ drop sequence pic_attrtype_seq;
+ drop table pic_attrtype;
+ drop sequence pic_attr_seq;
+ drop table pic_attr;
+ drop table pic;
+
+-- Create Schema
+
+create sequence user_seq start 1000;
+create table users (
+   uid integer not null primary key default nextval('user_seq')
+ , username text not null
+ , password text not null
+ , name text not null
+ , permissions text not null
+);
+
+create sequence pic_seq start 1000;
+create table pic (
+   pid integer not null primary key default nextval('pic_seq')
+ , file text not null
+ , name text not null default ''
+ , description text not null default ''
+ , created timestamp not null default now()
+ , vertical boolean not null default false
+ , keywords text not null default ''
+ , movie boolean not null default false
+ , hidden boolean not null default false
+);
+
+create sequence pic_comment_seq start 1000;
+create table pic_comment(
+   pcid integer not null primary key default nextval('pic_comment_seq')
+ , pid integer not null references pic(pid) on delete cascade
+ , uid integer not null references users(uid) on delete cascade
+ , comment text not null default ''
+ , created timestamp not null default now()
+);
+
+create sequence pic_event_seq start 1000;
+create table pic_event (
+   peid integer not null primary key default nextval('pic_event_seq')
+ , name text not null
+ , params text not null
+ , eorder real not null default 0
+);
+
+
+-----------------------------------------------------------------
+
+--  Attributes (not used!)
+create sequence pic_lookup_seq start 1000;
+create table pic_lookup (
+   pluid integer not null primary key default nextval('pic_lookup_seq')
+ , type text not null
+ , value text not null
+ , lorder real not null
+);
+
+create sequence pic_attrtype_seq start 1000;
+create table pic_attrtype (
+   patid integer not null primary key default nextval('pic_attrtype_seq')
+ , name text not null
+ , type_lu integer not null references pic_lookup(pluid) on delete cascade
+ , data text not null
+);
+
+create sequence pic_attr_seq start 1000;
+create table pic_attr (
+   paid integer not null primary key default nextval('pic_attr_seq')
+ , pid integer not null references pic(pid) on delete cascade
+ , patid integer not null references pic_attrtype(patid) on delete cascade
+ , value text not null
+);
+
+
+-- Insert the default data
+insert into pic_lookup (pluid, type, value, lorder) values (10, 'attrtype', 'text',      1);
+insert into pic_lookup (pluid, type, value, lorder) values (11, 'attrtype', 'list_lu',   2);
+insert into pic_lookup (pluid, type, value, lorder) values (12, 'attrtype', 'timestamp', 3);
+
+insert into pic_lookup (pluid, type, value, lorder) values (100, 'score', '1', 1);
+insert into pic_lookup (pluid, type, value, lorder) values (101, 'score', '2', 2);
+insert into pic_lookup (pluid, type, value, lorder) values (102, 'score', '3', 3);
+insert into pic_lookup (pluid, type, value, lorder) values (103, 'score', '4', 4);
+insert into pic_lookup (pluid, type, value, lorder) values (104, 'score', '5', 5);
+insert into pic_lookup (pluid, type, value, lorder) values (105, 'score', '6', 6);
+insert into pic_lookup (pluid, type, value, lorder) values (106, 'score', '7', 7);
+insert into pic_lookup (pluid, type, value, lorder) values (107, 'score', '8', 8);
+insert into pic_lookup (pluid, type, value, lorder) values (108, 'score', '9', 9);
+insert into pic_lookup (pluid, type, value, lorder) values (109, 'score', '10', 10);
+
+
+insert into pic_attrtype (patid, name, type_lu, data) values (100, 'Location', 10, '');
+insert into pic_attrtype (patid, name, type_lu, data) values (101, 'Subject Keywords', 10, '');
+insert into pic_attrtype (patid, name, type_lu, data) values (102, 'Picture Quality', 11, 'score');
+
+
+-- sortiz / af
+insert into users (username, password, name, permissions)
+  values ('sortiz', '8A.2SiLiFOy4U', 'Sam Ortiz', '~Admin~');
+
+-- guest / anon
+insert into users (username, password, name, permissions)
+  values ('guest', 'WfQSJk0fqAVko', 'Guest', '');
+
+
+
+-- Some test Data
+insert into pic (pid, name, file, description) values 
+  (1, 'Sam', '/home/files/sam.JPG', 'Sam smiling');
+insert into pic_attr (pid, patid, value) values (1, 100, 'Edmonton'); -- Location
+insert into pic_attr (pid, patid, value) values (1, 101, 'Sam'); -- Subject
+insert into pic_attr (pid, patid, value) values (1, 102, '5'); -- Picture Quality
+
+insert into pic (pid, name, file, description) values
+  (2, 'Sam and Joyce', '/home/files/P20252.JPG', 'Sam and Joyce sitting on a park bench eating.');
+insert into pic_attr (pid, patid, value) values (1, 100, 'Bowness'); -- Location
+insert into pic_attr (pid, patid, value) values (1, 101, 'Sam Joyce'); -- Subject
+insert into pic_attr (pid, patid, value) values (1, 102, '3'); -- Picture Quality
+
+
+
+
+
+
